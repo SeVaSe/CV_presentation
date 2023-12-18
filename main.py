@@ -21,6 +21,8 @@ def main():
 
     while cap.isOpened():
         ret, frame = cap.read()
+        frame = cv2.flip(frame, 1)
+
         if not ret:
             break
 
@@ -38,8 +40,8 @@ def main():
             detected_person = (int(x_min * w), int(y_min * h), int((x_max - x_min) * w), int((y_max - y_min) * h))
 
         right_hand_landmarks = []
-        if results.right_hand_landmarks:
-            right_hand_landmarks = [(int(lm.x * w), int(lm.y * h)) for lm in results.right_hand_landmarks.landmark]
+        if results.left_hand_landmarks:  # Используем left_hand_landmarks для левой руки
+            right_hand_landmarks = [(int(lm.x * w), int(lm.y * h)) for lm in results.left_hand_landmarks.landmark]
 
         if detected_person is not None:
             draw_rectangle(frame, detected_person, (0, 255, 0))  # Зеленый прямоугольник для человека
@@ -52,12 +54,12 @@ def main():
             right_hand_bbox = (min_x, min_y, max_x - min_x, max_y - min_y)
             draw_rectangle(frame, right_hand_bbox, (0, 0, 255))  # Красный прямоугольник для правой руки
 
-            point_12 = (int(landmarks[mp_holistic.PoseLandmark.RIGHT_SHOULDER].x * w),
-                        int(landmarks[mp_holistic.PoseLandmark.RIGHT_SHOULDER].y * h))
-            point_14 = (int(landmarks[mp_holistic.PoseLandmark.RIGHT_ELBOW].x * w),
-                       int(landmarks[mp_holistic.PoseLandmark.RIGHT_ELBOW].y * h))
-            point_16 = (int(landmarks[mp_holistic.PoseLandmark.RIGHT_WRIST].x * w),
-                       int(landmarks[mp_holistic.PoseLandmark.RIGHT_WRIST].y * h))
+            point_12 = (int(landmarks[mp_holistic.PoseLandmark.LEFT_SHOULDER].x * w),
+                        int(landmarks[mp_holistic.PoseLandmark.LEFT_SHOULDER].y * h))
+            point_14 = (int(landmarks[mp_holistic.PoseLandmark.LEFT_ELBOW].x * w),
+                       int(landmarks[mp_holistic.PoseLandmark.LEFT_ELBOW].y * h))
+            point_16 = (int(landmarks[mp_holistic.PoseLandmark.LEFT_WRIST].x * w),
+                       int(landmarks[mp_holistic.PoseLandmark.LEFT_WRIST].y * h))
 
             draw_line(frame, point_12, point_14, (255, 0, 0))  # Линия от плеча до точки 12 на правой руке
             draw_line(frame, point_12, point_14, (255, 0, 0))  # Линия от точки 12 до точки 14 на правой руке
